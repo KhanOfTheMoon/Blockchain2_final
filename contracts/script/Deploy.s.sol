@@ -69,7 +69,7 @@ contract Deploy is Script {
         deployedTimelock.grantRole(deployedTimelock.PROPOSER_ROLE(), address(deployedGovernor));
         deployedTimelock.grantRole(deployedTimelock.CANCELLER_ROLE(), address(deployedGovernor));
         deployedTimelock.grantRole(deployedTimelock.EXECUTOR_ROLE(), executor);
-        deployedTimelock.revokeRole(deployedTimelock.TIMELOCK_ADMIN_ROLE(), msg.sender);
+        deployedTimelock.revokeRole(deployedTimelock.DEFAULT_ADMIN_ROLE(), msg.sender);
 
         vm.stopBroadcast();
 

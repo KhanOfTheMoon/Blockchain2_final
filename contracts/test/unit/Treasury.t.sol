@@ -7,7 +7,7 @@ import {Treasury} from "../../src/governance/Treasury.sol";
 
 contract TreasuryTest is Test {
     address private timelock = address(0x7E10);
-    address private deployer = address(0xD3P10);
+    address private deployer = address(0xD3E10);
     address payable private recipient = payable(address(0xBEEF));
 
     Treasury private treasury;

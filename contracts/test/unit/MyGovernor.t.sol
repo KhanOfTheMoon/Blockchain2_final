@@ -40,7 +40,7 @@ contract MyGovernorTest is Test {
 
         timelock.grantRole(timelock.PROPOSER_ROLE(), address(governor));
         timelock.grantRole(timelock.CANCELLER_ROLE(), address(governor));
-        timelock.revokeRole(timelock.TIMELOCK_ADMIN_ROLE(), address(this));
+        timelock.revokeRole(timelock.DEFAULT_ADMIN_ROLE(), address(this));
 
         token.delegate(address(this));
         vm.warp(block.timestamp + 1);
