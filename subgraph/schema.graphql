@@ -1,51 +1,37 @@
-type User @entity {
+type Proposal @entity(immutable: false) {
   id: ID!
-  address: Bytes!
-  swaps: [Swap!]! @derivedFrom(field: "user")
-  vaultDeposits: [VaultDeposit!]! @derivedFrom(field: "user")
-  votes: [Vote!]! @derivedFrom(field: "user")
+  proposalId: BigInt!
+  proposer: Bytes!
+  description: String!
+  voteStart: BigInt!
+  voteEnd: BigInt!
+  state: String!
+  createdAt: BigInt!
+  blockNumber: BigInt!
+  transactionHash: Bytes!
 }
 
-type Swap @entity {
+type Vote @entity(immutable: true) {
   id: ID!
-  user: User!
+  proposal: Proposal!
+  proposalId: BigInt!
+  voter: Bytes!
+  support: Int!
+  weight: BigInt!
+  reason: String!
+  timestamp: BigInt!
+  blockNumber: BigInt!
+  transactionHash: Bytes!
+}
+
+type Swap @entity(immutable: true) {
+  id: ID!
+  trader: Bytes!
   tokenIn: Bytes!
   tokenOut: Bytes!
   amountIn: BigInt!
   amountOut: BigInt!
   timestamp: BigInt!
-  txHash: Bytes!
-}
-
-type VaultDeposit @entity {
-  id: ID!
-  user: User!
-  vault: Bytes!
-  assets: BigInt!
-  shares: BigInt!
-  timestamp: BigInt!
-  txHash: Bytes!
-}
-
-type Proposal @entity {
-  id: ID!
-  proposer: Bytes!
-  description: String!
-  startBlock: BigInt!
-  endBlock: BigInt!
-  state: String!
-  eta: BigInt
-  createdAt: BigInt!
-  votes: [Vote!]! @derivedFrom(field: "proposal")
-}
-
-type Vote @entity {
-  id: ID!
-  user: User!
-  proposal: Proposal!
-  support: Int!
-  weight: BigInt!
-  reason: String
-  timestamp: BigInt!
-  txHash: Bytes!
+  blockNumber: BigInt!
+  transactionHash: Bytes!
 }
