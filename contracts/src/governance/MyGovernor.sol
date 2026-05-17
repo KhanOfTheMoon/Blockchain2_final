@@ -37,14 +37,14 @@ contract MyGovernor is
         return super.state(proposalId);
     }
 
-    function proposalThreshold() public view override(GovernorSettings) returns (uint256) {
+    function proposalThreshold() public view override(Governor, GovernorSettings) returns (uint256) {
         return super.proposalThreshold();
     }
 
     function quorum(uint256 blockNumber)
         public
         view
-        override(GovernorVotesQuorumFraction)
+        override(Governor, GovernorVotesQuorumFraction)
         returns (uint256)
     {
         return super.quorum(blockNumber);
@@ -95,7 +95,7 @@ contract MyGovernor is
     function supportsInterface(bytes4 interfaceId)
         public
         view
-        override(Governor, GovernorTimelockControl)
+        override(Governor)
         returns (bool)
     {
         return super.supportsInterface(interfaceId);

@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {Initializable} from "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
-import {UUPSUpgradeable} from "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
-import {OwnableUpgradeable} from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import {Initializable} from "@openzeppelin-upgradeable/proxy/utils/Initializable.sol";
+import {UUPSUpgradeable} from "@openzeppelin-upgradeable/proxy/utils/UUPSUpgradeable.sol";
+import {OwnableUpgradeable} from "@openzeppelin-upgradeable/access/OwnableUpgradeable.sol";
 
 contract UpgradeableVaultV1 is Initializable, OwnableUpgradeable, UUPSUpgradeable {
     uint256 public totalDeposits;
@@ -19,7 +19,6 @@ contract UpgradeableVaultV1 is Initializable, OwnableUpgradeable, UUPSUpgradeabl
 
     function initialize(address initialOwner) public initializer {
         __Ownable_init(initialOwner);
-        __UUPSUpgradeable_init();
         depositCap = type(uint256).max;
     }
 
