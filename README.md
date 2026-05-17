@@ -81,23 +81,70 @@ slither .
 ```
 
 ## Deployment Commands
-### Local / testnet deployment
+Full deployment notes are in `docs/DEPLOYMENT.md`.
+
+### Build
 ```bash
 cd contracts
-forge script script/Deploy.s.sol:Deploy --rpc-url $L2_RPC_URL --broadcast
+forge build
 ```
 
-### Vault upgrade template
+### Test
 ```bash
 cd contracts
-forge script script/UpgradeVault.s.sol:UpgradeVault --rpc-url $L2_RPC_URL --broadcast
+forge test
 ```
 
-### Verification template
+### Local deployment
+Start a local chain:
+
+```bash
+anvil
+```
+
+Deploy:
+
+```bash
+cd contracts
+forge script script/Deploy.s.sol:Deploy --rpc-url http://127.0.0.1:8545 --broadcast
+```
+
+### L2 testnet deployment
+```bash
+cd contracts
+forge script script/Deploy.s.sol:Deploy --rpc-url $L2_RPC_URL --broadcast --verify
+```
+
+### Verify deployment wiring
 ```bash
 cd contracts
 forge script script/VerifyDeployment.s.sol:VerifyDeployment --rpc-url $L2_RPC_URL
 ```
+
+### Upgrade vault V1 to V2
+```bash
+cd contracts
+forge script script/UpgradeVault.s.sol:UpgradeVault \
+  --sig "run(address,address)" \
+  $VAULT_ADDRESS \
+  0x0000000000000000000000000000000000000000 \
+  --rpc-url $L2_RPC_URL \
+  --broadcast
+```
+
+## Governance and Upgrade Parameters
+- Governor clock mode: timestamp-based via `GovernanceToken.clock()`, so voting values are seconds.
+- Voting delay: `1 days`.
+- Voting period: `1 weeks`.
+- Quorum: `4%`.
+- Proposal threshold: `10,000 GOV`, or `1%` of the initial `1,000,000 GOV` supply.
+- Timelock delay: `2 days`.
+- Timelock proposer/canceller: Governor.
+- Timelock executor: `TIMELOCK_EXECUTOR`, defaulting to `address(0)`.
+- Timelock admin: deployer admin is revoked after setup.
+- Treasury: controlled by Timelock through `Treasury.timelock()`.
+- Upgradeable vault: `UpgradeableVaultV1` is deployed behind an `ERC1967Proxy`; proxy owner is Timelock.
+- Upgrade path: `UpgradeableVaultV1 -> UpgradeableVaultV2`, preserving V1 storage layout and adding V2 state after existing V1 variables.
 
 ## Frontend Commands
 ```bash
@@ -120,7 +167,8 @@ npm run preview
 | Timelock | TBD | Fill after deployment |
 | Treasury | TBD | Fill after deployment |
 | AMMFactory | TBD | Fill after deployment |
-| ProtocolVault4626 | TBD | Fill after deployment |
+| UpgradeableVaultV1 proxy | TBD | Fill after deployment |
+| UpgradeableVaultV1 implementation | TBD | Fill after deployment |
 | ChainlinkPriceOracle | TBD | Fill after deployment |
 
 ## Verified Explorer Links
@@ -128,7 +176,8 @@ npm run preview
 - Governor: TBD
 - Treasury: TBD
 - AMMFactory: TBD
-- ProtocolVault4626: TBD
+- UpgradeableVaultV1 proxy: TBD
+- UpgradeableVaultV1 implementation: TBD
 - ChainlinkPriceOracle: TBD
 
 ## Known Limitations
@@ -136,7 +185,7 @@ npm run preview
 - Contract logic is intentionally incomplete in several places.
 - Subgraph ABI bindings must be generated and linked.
 - Frontend wallet, network, and transaction flows are placeholders.
-- Deployment scripts need final timelock and proxy wiring.
+- Deployment still needs real L2 addresses and explorer verification links after broadcast.
 
 ## Team Contributions
 Fill in `docs/TEAM_CONTRIBUTIONS.md` with owner-by-owner responsibilities, review areas, and demo tasks.

@@ -5,6 +5,7 @@ import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import {ERC20Permit} from "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol";
 import {ERC20Votes} from "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol";
 import {Nonces} from "@openzeppelin/contracts/utils/Nonces.sol";
+import {Time} from "@openzeppelin/contracts/utils/types/Time.sol";
 
 contract GovernanceToken is ERC20, ERC20Permit, ERC20Votes {
     uint256 public constant INITIAL_SUPPLY = 1_000_000 ether;
@@ -29,6 +30,15 @@ contract GovernanceToken is ERC20, ERC20Permit, ERC20Votes {
     /// @notice Placeholder for future mint logic if the token design changes.
     function mint(address /*to*/, uint256 /*amount*/) external pure {
         revert MintDisabled();
+    }
+
+    /// @notice Uses timestamp checkpoints so Governor settings can be expressed in seconds.
+    function clock() public view override returns (uint48) {
+        return Time.timestamp();
+    }
+
+    function CLOCK_MODE() public pure override returns (string memory) {
+        return "mode=timestamp";
     }
 
     function _update(address from, address to, uint256 value)

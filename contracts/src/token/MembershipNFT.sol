@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
+import {ERC721 as OZERC721} from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import {ERC721URIStorage} from "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 
@@ -12,7 +13,7 @@ contract MembershipNFT is ERC721URIStorage, Ownable {
     error ZeroAddress();
     error EmptyTokenUri();
 
-    constructor() ERC721("Membership NFT", "MNFT") Ownable(msg.sender) {}
+    constructor() OZERC721("Membership NFT", "MNFT") Ownable(msg.sender) {}
 
     /// @notice Template mint hook for membership or game-item style NFTs.
     function safeMint(address to, string calldata tokenUri) external onlyOwner returns (uint256 tokenId) {

@@ -33,37 +33,29 @@ export default function App() {
     <div className="app-shell">
       <header className="topbar">
         <div>
-          <p className="eyebrow">Blockchain Final Project Template</p>
-          <h1>DeFi Super-App</h1>
-          <p className="subtitle">AMM, ERC4626 vault, DAO governance, oracle integration, and subgraph skeleton.</p>
+          <h1 className="main-title">DeFi Superapp</h1>
+          <p className="subtitle">AMM | Vault | Governance | Oracle | Subgraph</p>
         </div>
         <div className="topbar-actions">
           <button type="button" className="primary-button" onClick={wallet.connectWallet}>Connect Wallet</button>
           <button type="button" className="secondary-button" onClick={wallet.disconnectWallet}>Disconnect</button>
-          <button type="button" className="ghost-button" onClick={wallet.setWrongNetwork}>Wrong Network Demo</button>
         </div>
       </header>
 
-      <div className="content-grid">
-        <aside className="sidebar">
-          <WalletStatus wallet={wallet} />
-          <ErrorMessage message={wallet.error} />
-          <nav className="tab-list" aria-label="Primary">
-            {tabs.map((tab) => (
-              <button
-                key={tab.id}
-                type="button"
-                className={tab.id === activeTab ? 'tab-button active' : 'tab-button'}
-                onClick={() => setActiveTab(tab.id)}
-              >
-                {tab.label}
-              </button>
-            ))}
-          </nav>
-        </aside>
+      <nav className="tabs">
+        {tabs.map((tab) => (
+          <button
+            key={tab.id}
+            className={tab.id === activeTab ? 'active' : ''}
+            onClick={() => setActiveTab(tab.id)}
+            aria-current={tab.id === activeTab ? 'page' : undefined}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </nav>
 
-        <main className="main-panel">{activePage}</main>
-      </div>
+      <main className="main-content">{activePage}</main>
     </div>
   );
 }
