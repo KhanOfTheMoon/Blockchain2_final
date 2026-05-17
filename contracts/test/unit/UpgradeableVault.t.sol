@@ -31,8 +31,8 @@ contract UpgradeableVaultTest is Test {
         assertEq(_implementationOf(address(proxy)), address(implementationV1));
         assertEq(proxyAsV1.owner(), owner);
 
-        vm.expectRevert();
-        implementationV1.owner();
+        // Implementation contract should not be initialized; owner() should be zero address
+        assertEq(implementationV1.owner(), address(0));
     }
 
     function test_V1InitialStateIsSetCorrectly() public {

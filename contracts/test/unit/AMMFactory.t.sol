@@ -58,7 +58,7 @@ contract AMMFactoryTest is Test {
     }
 
     function test_CreatePool_RejectsIdenticalTokens() public {
-        vm.expectRevert(ZeroAddress.selector);
+        vm.expectRevert(AMMFactory.IdenticalTokens.selector);
         factory.createPool(address(tokenA), address(tokenA), "LP Token", "LP");
     }
 
