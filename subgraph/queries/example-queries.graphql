@@ -1,0 +1,76 @@
+# Query 1: recent swaps for the dashboard
+query RecentSwaps {
+  swaps(first: 10, orderBy: timestamp, orderDirection: desc) {
+    id
+    amountIn
+    amountOut
+    timestamp
+    user {
+      id
+      address
+    }
+  }
+}
+
+# Query 2: vault activity overview
+query RecentVaultDeposits {
+  vaultDeposits(first: 10, orderBy: timestamp, orderDirection: desc) {
+    id
+    assets
+    shares
+    timestamp
+    user {
+      id
+      address
+    }
+  }
+}
+
+# Query 3: open governance proposals
+query OpenProposals {
+  proposals(where: { state_not: "Executed" }) {
+    id
+    description
+    state
+    proposer
+    startBlock
+    endBlock
+  }
+}
+
+# Query 4: votes by proposal
+query ProposalVotes($proposalId: ID!) {
+  votes(where: { proposal: $proposalId }) {
+    id
+    support
+    weight
+    reason
+    user {
+      id
+      address
+    }
+  }
+}
+
+# Query 5: user profile snapshot
+query UserProfile($userId: ID!) {
+  user(id: $userId) {
+    id
+    address
+    swaps {
+      id
+      amountIn
+      amountOut
+    }
+    vaultDeposits {
+      id
+      assets
+      shares
+    }
+    votes {
+      id
+      support
+      weight
+    }
+  }
+}

@@ -1,0 +1,51 @@
+type User @entity {
+  id: ID!
+  address: Bytes!
+  swaps: [Swap!]! @derivedFrom(field: "user")
+  vaultDeposits: [VaultDeposit!]! @derivedFrom(field: "user")
+  votes: [Vote!]! @derivedFrom(field: "user")
+}
+
+type Swap @entity {
+  id: ID!
+  user: User!
+  tokenIn: Bytes!
+  tokenOut: Bytes!
+  amountIn: BigInt!
+  amountOut: BigInt!
+  timestamp: BigInt!
+  txHash: Bytes!
+}
+
+type VaultDeposit @entity {
+  id: ID!
+  user: User!
+  vault: Bytes!
+  assets: BigInt!
+  shares: BigInt!
+  timestamp: BigInt!
+  txHash: Bytes!
+}
+
+type Proposal @entity {
+  id: ID!
+  proposer: Bytes!
+  description: String!
+  startBlock: BigInt!
+  endBlock: BigInt!
+  state: String!
+  eta: BigInt
+  createdAt: BigInt!
+  votes: [Vote!]! @derivedFrom(field: "proposal")
+}
+
+type Vote @entity {
+  id: ID!
+  user: User!
+  proposal: Proposal!
+  support: Int!
+  weight: BigInt!
+  reason: String
+  timestamp: BigInt!
+  txHash: Bytes!
+}

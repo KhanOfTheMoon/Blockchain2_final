@@ -1,0 +1,25 @@
+# Foundry
+contracts/out/
+contracts/cache/
+contracts/broadcast/
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+
+# Subgraph
+subgraph/node_modules/
+subgraph/build/
+subgraph/generated/
+
+# Environment files
+.env
+*.env
+contracts/.env
+frontend/.env
+subgraph/.env
+
+# Logs and local state
+*.log
+.DS_Store
