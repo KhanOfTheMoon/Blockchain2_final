@@ -18,16 +18,33 @@ contract MyGovernor is
     GovernorVotesQuorumFraction,
     GovernorTimelockControl
 {
+    uint48 public constant VOTING_DELAY_SECONDS = 30 seconds;
+    uint32 public constant VOTING_PERIOD_SECONDS = 1 weeks;
+    uint256 public constant PROPOSAL_THRESHOLD = 10_000 ether;
+    uint256 public constant REQUIRED_TIMELOCK_DELAY = 2 days;
+
+    error InvalidTimelockDelay(uint256 actualDelay, uint256 requiredDelay);
+
     constructor(IVotes token_, TimelockController timelock_)
         Governor("MyGovernor")
-        GovernorSettings(1 days, 1 weeks, 10_000 ether)
+        GovernorSettings(
+            VOTING_DELAY_SECONDS,
+            VOTING_PERIOD_SECONDS,
+            PROPOSAL_THRESHOLD
+        )
         GovernorVotes(token_)
         GovernorVotesQuorumFraction(4)
         GovernorTimelockControl(timelock_)
-    {}
+    {
+        uint256 actualDelay = timelock_.getMinDelay();
 
-    /// @notice The proposal threshold is configured in the GovernorSettings constructor.
-    /// @dev 10,000 GOV tokens is a template placeholder for 1% if initial supply is 1,000,000 GOV.
+        if (actualDelay != REQUIRED_TIMELOCK_DELAY) {
+            revert InvalidTimelockDelay(actualDelay, REQUIRED_TIMELOCK_DELAY);
+        }
+    }
+
+    /// @notice GovernanceToken uses timestamp checkpoints, so delay and period are measured in seconds.
+    /// @dev Proposal threshold is 1% of the 1,000,000 GOV initial supply.
     function state(uint256 proposalId)
         public
         view
@@ -37,7 +54,12 @@ contract MyGovernor is
         return super.state(proposalId);
     }
 
-    function proposalThreshold() public view override(Governor, GovernorSettings) returns (uint256) {
+    function proposalThreshold()
+        public
+        view
+        override(Governor, GovernorSettings)
+        returns (uint256)
+    {
         return super.proposalThreshold();
     }
 
@@ -65,8 +87,18 @@ contract MyGovernor is
         uint256[] memory values,
         bytes[] memory calldatas,
         bytes32 descriptionHash
-    ) internal override(Governor, GovernorTimelockControl) returns (uint48) {
-        return super._queueOperations(proposalId, targets, values, calldatas, descriptionHash);
+    )
+        internal
+        override(Governor, GovernorTimelockControl)
+        returns (uint48)
+    {
+        return super._queueOperations(
+            proposalId,
+            targets,
+            values,
+            calldatas,
+            descriptionHash
+        );
     }
 
     function _executeOperations(
@@ -75,8 +107,17 @@ contract MyGovernor is
         uint256[] memory values,
         bytes[] memory calldatas,
         bytes32 descriptionHash
-    ) internal override(Governor, GovernorTimelockControl) {
-        super._executeOperations(proposalId, targets, values, calldatas, descriptionHash);
+    )
+        internal
+        override(Governor, GovernorTimelockControl)
+    {
+        super._executeOperations(
+            proposalId,
+            targets,
+            values,
+            calldatas,
+            descriptionHash
+        );
     }
 
     function _cancel(
@@ -84,11 +125,20 @@ contract MyGovernor is
         uint256[] memory values,
         bytes[] memory calldatas,
         bytes32 descriptionHash
-    ) internal override(Governor, GovernorTimelockControl) returns (uint256) {
+    )
+        internal
+        override(Governor, GovernorTimelockControl)
+        returns (uint256)
+    {
         return super._cancel(targets, values, calldatas, descriptionHash);
     }
 
-    function _executor() internal view override(Governor, GovernorTimelockControl) returns (address) {
+    function _executor()
+        internal
+        view
+        override(Governor, GovernorTimelockControl)
+        returns (address)
+    {
         return super._executor();
     }
 
