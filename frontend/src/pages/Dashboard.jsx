@@ -1,4 +1,5 @@
 import PageShell from '../components/PageShell.jsx';
+import ContractEventFeed from '../components/ContractEventFeed.jsx';
 
 export default function Dashboard({ wallet }) {
   return (
@@ -23,6 +24,8 @@ export default function Dashboard({ wallet }) {
           <p>Display current delegate address and surface a delegation action here later.</p>
         </article>
       </div>
+
+      <ContractEventFeed />
     </PageShell>
   );
 }
