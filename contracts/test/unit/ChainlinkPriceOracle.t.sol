@@ -50,7 +50,15 @@ contract ChainlinkPriceOracleTest is Test {
     function test_LatestPrice_RejectsStalePrice() public {
         aggregator.setUpdatedAt(block.timestamp - STALE_PERIOD - 1);
 
-        vm.expectRevert(ChainlinkPriceOracle.PriceStale.selector);
+        (uint80 roundId, int256 answer,, uint256 updatedAt, uint80 answeredInRound) =
+            aggregator.latestRoundData();
+        uint256 staleAfter = updatedAt + STALE_PERIOD;
+
+        vm.expectRevert(abi.encodeWithSelector(
+            ChainlinkPriceOracle.PriceStale.selector,
+            updatedAt,
+            staleAfter
+        ));
         oracle.latestPrice();
     }
 
