@@ -15,7 +15,10 @@ contract LPToken is ERC20, Ownable {
     error PoolAlreadySet();
     error ZeroAddress();
 
-    constructor(string memory name_, string memory symbol_) ERC20(name_, symbol_) Ownable(msg.sender) {}
+    constructor(string memory name_, string memory symbol_)
+        ERC20(name_, symbol_)
+        Ownable(msg.sender)
+    {}
 
     modifier onlyPool() {
         if (msg.sender != pool) revert NotPool();
@@ -25,19 +28,25 @@ contract LPToken is ERC20, Ownable {
     function setPool(address pool_) external onlyOwner {
         if (pool_ == address(0)) revert ZeroAddress();
         if (pool != address(0)) revert PoolAlreadySet();
+
         pool = pool_;
+
         emit PoolSet(pool_);
     }
 
-    /// @notice Pool-controlled mint hook for LP shares.
     function mint(address to, uint256 amount) external onlyPool {
+        if (to == address(0)) revert ZeroAddress();
+
         _mint(to, amount);
+
         emit LiquidityMinted(to, amount);
     }
 
-    /// @notice Pool-controlled burn hook for LP share redemption.
     function burn(address from, uint256 amount) external onlyPool {
+        if (from == address(0)) revert ZeroAddress();
+
         _burn(from, amount);
+
         emit LiquidityBurned(from, amount);
     }
 }
