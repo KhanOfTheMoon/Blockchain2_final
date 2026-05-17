@@ -6,6 +6,11 @@ import {UUPSUpgradeable} from "@openzeppelin-upgradeable/proxy/utils/UUPSUpgrade
 import {OwnableUpgradeable} from "@openzeppelin-upgradeable/access/OwnableUpgradeable.sol";
 
 contract UpgradeableVaultV1 is Initializable, OwnableUpgradeable, UUPSUpgradeable {
+    /// @dev Storage layout:
+    /// slot 0: totalDeposits
+    /// slot 1: balances mapping seed
+    /// slot 2: depositCap
+    /// slots 3-50: reserved upgrade gap. V2 consumes the next compatible slot after this range.
     uint256 public totalDeposits;
     mapping(address => uint256) public balances;
     uint256 public depositCap;
@@ -17,8 +22,14 @@ contract UpgradeableVaultV1 is Initializable, OwnableUpgradeable, UUPSUpgradeabl
     error CapExceeded();
     error InsufficientBalance();
 
+    /// @custom:oz-upgrades-unsafe-allow constructor
+    constructor() {
+        _disableInitializers();
+    }
+
     function initialize(address initialOwner) public initializer {
         __Ownable_init(initialOwner);
+        __UUPSUpgradeable_init();
         depositCap = type(uint256).max;
     }
 
@@ -45,5 +56,5 @@ contract UpgradeableVaultV1 is Initializable, OwnableUpgradeable, UUPSUpgradeabl
 
     function _authorizeUpgrade(address newImplementation) internal override onlyOwner {}
 
-    uint256[49] private __gap;
+    uint256[48] private __gap;
 }

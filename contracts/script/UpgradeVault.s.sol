@@ -2,11 +2,21 @@
 pragma solidity ^0.8.24;
 
 import {Script} from "forge-std/Script.sol";
-import {UpgradeableVaultV1} from "../src/vault/UpgradeableVaultV1.sol";
+import {console2} from "forge-std/console2.sol";
 import {UpgradeableVaultV2} from "../src/vault/UpgradeableVaultV2.sol";
 
 interface IUUPSUpgrade {
     function upgradeToAndCall(address newImplementation, bytes calldata data) external payable;
+}
+
+interface ITimelockExecute {
+    function execute(
+        address target,
+        uint256 value,
+        bytes calldata payload,
+        bytes32 predecessor,
+        bytes32 salt
+    ) external payable;
 }
 
 contract UpgradeVault is Script {
@@ -16,11 +26,23 @@ contract UpgradeVault is Script {
             implementation = _deployV2();
         }
 
-        bytes memory data = _buildInitData();
+        bytes memory initData = _buildInitData();
+        bytes memory upgradeCall = abi.encodeCall(IUUPSUpgrade.upgradeToAndCall, (implementation, initData));
+        address timelock = vm.envOr("UPGRADE_TIMELOCK_ADDRESS", address(0));
 
         vm.startBroadcast();
-        IUUPSUpgrade(proxyAddress).upgradeToAndCall(implementation, data);
+        if (timelock == address(0)) {
+            IUUPSUpgrade(proxyAddress).upgradeToAndCall(implementation, initData);
+        } else {
+            bytes32 predecessor = vm.envOr("UPGRADE_TIMELOCK_PREDECESSOR", bytes32(0));
+            bytes32 salt = vm.envOr("UPGRADE_TIMELOCK_SALT", bytes32(0));
+            ITimelockExecute(timelock).execute(proxyAddress, 0, upgradeCall, predecessor, salt);
+        }
         vm.stopBroadcast();
+
+        console2.log("UpgradeableVault proxy:", proxyAddress);
+        console2.log("UpgradeableVaultV2 implementation:", implementation);
+        console2.log("Upgrade caller:", timelock == address(0) ? msg.sender : timelock);
     }
 
     function deployV2Implementation() external returns (address implementation) {
