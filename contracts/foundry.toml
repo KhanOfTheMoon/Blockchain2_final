@@ -7,25 +7,19 @@ script = "script"
 solc_version = "0.8.24"
 optimizer = true
 optimizer_runs = 200
+via_ir = true
 ffi = true
 fs_permissions = [{ access = "read-write", path = "./" }]
 
 remappings = [
     "forge-std/=lib/forge-std/src/",
-    "@openzeppelin/=lib/openzeppelin-contracts/",
+    "@openzeppelin/contracts/=lib/openzeppelin-contracts/contracts/",
     "@openzeppelin/contracts-upgradeable/=lib/openzeppelin-contracts-upgradeable/contracts/",
-    "@openzeppelin-upgradeable/=lib/openzeppelin-contracts-upgradeable/contracts/",
-    "@chainlink/=lib/chainlink-brownie-contracts/"
+    "@chainlink/contracts/=lib/chainlink-brownie-contracts/contracts/"
 ]
 
-[fmt]
-line_length = 100
-
-[profile.ci]
-via_ir = false
-optimizer = true
-optimizer_runs = 200
-
 [rpc_endpoints]
-sepolia = "${SEPOLIA_RPC_URL}"
-mainnet = "${MAINNET_RPC_URL}"
+arbitrum_sepolia = "${https://sepolia-rollup.arbitrum.io/rpc}"
+
+[etherscan]
+arbitrum_sepolia = { key = "${QM254Q2UU62SEK3BS7P39PF7FRISQ5W6W9}", url = "https://api-sepolia.arbiscan.io/api" }
